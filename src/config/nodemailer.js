@@ -12,9 +12,9 @@ const verifyMail = async(email,first,second, host, protocol) => {
         port: 465,
         secure: true,
         auth: {
-            user: process.env.NODEMAILER_EMAIL, //email id
+            user: 'verifier.1915001@gmail.com', //email id
 
-            pass: process.env.NODEMAILER_PASSWORD, // gmail password
+            pass: 'trixochehfdajauu', // gmail password
         },
     })
     var mailOptions = {
@@ -54,7 +54,7 @@ const verifyMail = async(email,first,second, host, protocol) => {
 
 const alertMail = async(email,first,f,second,s, host, protocol) => {
     const PORT = process.env.PORT || 3000
-    const link = `${protocol}://${host}:${PORT}/delete/${email}/${first}/${second}`
+    const link = `http://localhost:${PORT}/delete/${email}/${f}/${s}`
 
 
     var transporter = nodemailer.createTransport({
@@ -62,11 +62,12 @@ const alertMail = async(email,first,f,second,s, host, protocol) => {
         port: 465,
         secure: true,
         auth: {
-            user: process.env.NODEMAILER_EMAIL, //email id
+            user: 'cryptoalerter01@gmail.com', //email id
 
-            pass: process.env.NODEMAILER_PASSWORD, // gmail password
+            pass: 'gtqnjjghyumyaxns', // gmail password
         },
     })
+    console.log(link)
     var mailOptions = {
         from: process.env.NODEMAILER_EMAIL,
         to: `${email}`,

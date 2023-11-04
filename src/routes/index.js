@@ -30,6 +30,12 @@ router.post('/', async(req, res) => {
     if(dataFirst && dataSecond){
         verifyMail(email,first,second, req.hostname, req.protocol)
     }else{
+        notifier.notify({
+            title: 'Trade Pair not correct',
+            message: 'Provide a correct trade pair',
+            sound: true,
+            wait: true
+          },)
         console.log(dataFirst,dataSecond)
     }
     res.redirect('/')
@@ -50,6 +56,15 @@ router.get('/verify/:email/:first/:second', async(req, res) => {
 
     })
     let saveCrypto = await crypto.save()
+    res.redirect('/')
+});
+router.get('/delete/:email/:first/:second', async(req, res) => {
+    const first=req.params.first
+    const email=req.params.email
+    const second=req.params.second
+    console.log(req.params)
+    const deleteCrypto=await Crypto.findOneAndDelete({first,email,second})
+
     res.redirect('/')
 });
 
