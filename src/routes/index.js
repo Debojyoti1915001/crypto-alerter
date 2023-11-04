@@ -13,12 +13,12 @@ router.get('/data', async(req, res) => {
 
     const data = await axios.get(' https://api.kraken.com/0/public/AssetPairs');
     const allCryptoPair=data.data.result
-    console.log(allCryptoPair)
+    // console.log(allCryptoPair)
     const allCryptoPairData=[]
     for (const key in allCryptoPair) {
         allCryptoPairData.push({'name':key,'altname':allCryptoPair[key].altname,'wsname':allCryptoPair[key].wsname,'base':allCryptoPair[key].base,'quote':allCryptoPair[key].quote})
     }
-    console.log(allCryptoPairData)
+    // console.log(allCryptoPairData)
     res.render('./userViews/index',{allCryptoPairData})
 
 });

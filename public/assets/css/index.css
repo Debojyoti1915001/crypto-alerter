@@ -1,12 +1,15 @@
+.custom-button {
+  background: #6495ED;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 8px;
+}
 
-
-  body {
-    background-color: #b881f1; /*Color*/
-    font-family: "Roboto", sans-serif; /*Font*/
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
+.custom-button:hover {
+  background: #1E90FF;
+}
   
   .table {
     font-size: 10px;
@@ -17,7 +20,7 @@
   }
   
   .top {
-    background-color: #8e44ad; /*Color*/
+    background-color: #000080; /*Color*/
     border-radius: 15px 15px 0px 0px;
     height: 50px;
     width: 80%;
@@ -35,7 +38,7 @@
   }
   
   .bottom {
-    background-color: #8e44ad; /*Color*/
+    background-color: #000080; /*Color*/
     border-radius: 0px 0px 15px 15px;
     height: 50px;
     width: 80%;

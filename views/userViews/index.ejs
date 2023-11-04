@@ -198,16 +198,18 @@ Near there you can see "!^^^!"-->
     <div class="top">
       <div class="left">Name</div>
       
-      <div class="right">WSNAME</div>
-      <div class="center">Base | Quote</div>
+      <div class="right">Base | Quote</div>
+      <div class="center">Copy</div>
     </div>
     <div id="myTable">
       <% for(i of allCryptoPairData){ %>
       <div>
         <div class="inside">
-          <span class="left"><%=i.name%></span>
-          <span class="right"><%=i.wsname%></span>
-          <span class="center"><%= i.base %>  |  <%= i.quote %></span>
+          <span class="left" ><p id="copyText"><%=i.name%></p></span>
+          <span class="right"><%= i.base %>  |  <%= i.quote %></span>
+          <span class="center">
+            <button class="custom-button" onclick="copyToClipboard()">Copy!</button>
+          </span>
         </div>
       </div>
       <%}%>
@@ -217,8 +219,28 @@ Near there you can see "!^^^!"-->
     </br>
     </br>
     
-     <!-- footer section -->
-  
+    <script>
+      function copyToClipboard() {
+          // Select the text within the <p> tag
+          const copyText = document.getElementById('copyText');
+          const textRange = document.createRange();
+          textRange.selectNode(copyText);
+          
+          // Create a selection and select the text
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(textRange);
+
+          // Execute the copy command
+          document.execCommand('copy');
+
+          // Deselect the text
+          selection.removeAllRanges();
+
+          // Provide user feedback (you can use a modal, alert, or any other UI element)
+          alert('Text has been copied to clipboard: ' + copyText.textContent);
+      }
+  </script>
   <!-- footer section -->
   <script src="/assets/js/main.js"></script>
   <!-- jQery -->
