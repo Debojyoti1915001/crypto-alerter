@@ -208,7 +208,7 @@ Near there you can see "!^^^!"-->
           <span class="left" ><p id="copyText"><%=i.name%></p></span>
           <span class="right"><%= i.base %>  |  <%= i.quote %></span>
           <span class="center">
-            <button class="custom-button" onclick="copyToClipboard()">Copy!</button>
+            <button class="custom-button" onclick="copyToClipboard('<%=i.name%>')">Copy!</button>
           </span>
         </div>
       </div>
@@ -220,26 +220,23 @@ Near there you can see "!^^^!"-->
     </br>
     
     <script>
-      function copyToClipboard() {
-          // Select the text within the <p> tag
-          const copyText = document.getElementById('copyText');
-          const textRange = document.createRange();
-          textRange.selectNode(copyText);
-          
-          // Create a selection and select the text
-          const selection = window.getSelection();
-          selection.removeAllRanges();
-          selection.addRange(textRange);
+       function copyToClipboard(textToCopy) {
+            // Create a text area element and set its value to the text to be copied
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
 
-          // Execute the copy command
-          document.execCommand('copy');
+            // Select the text in the text area and copy it to the clipboard
+            textArea.select();
+            document.execCommand('copy');
 
-          // Deselect the text
-          selection.removeAllRanges();
+            // Remove the temporary text area
+            document.body.removeChild(textArea);
 
-          // Provide user feedback (you can use a modal, alert, or any other UI element)
-          alert('Text has been copied to clipboard: ' + copyText.textContent);
-      }
+            // Provide user feedback
+            alert('Text has been copied to clipboard: ' + textToCopy);
+        }
+
   </script>
   <!-- footer section -->
   <script src="/assets/js/main.js"></script>
