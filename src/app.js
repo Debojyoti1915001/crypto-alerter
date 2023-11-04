@@ -61,7 +61,7 @@ async function alerter() {
     }
     
 }
-setInterval(alerter,60*60*1000);
+setInterval(alerter,5000);
 app.use(connect_flash())
 
 
