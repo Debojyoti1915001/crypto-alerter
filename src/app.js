@@ -41,7 +41,7 @@ async function alerter() {
         const first = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.first}`);
         const second = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.second}`);
         
-        const val1=Number(first.data.result.last)+1
+        const val1=Number(first.data.result.last)
         const val2=Number(second.data.result.last)
         if(val1>val2){
             var keyFirst,keySecond; 
