@@ -5,7 +5,7 @@ const notifier = require('node-notifier');
 const verifyMail = async(email,first,second, host, protocol) => {
    
     const PORT = process.env.PORT || 3000
-    const link = `${protocol}://${host}:${PORT}/verify/${email}/${first}/${second}`
+    const link = `https://crypto-alerter01.onrender.com/verify/${email}/${first}/${second}`
 
     var transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -54,7 +54,7 @@ const verifyMail = async(email,first,second, host, protocol) => {
 
 const alertMail = async(email,first,f,second,s, host, protocol) => {
     const PORT = process.env.PORT || 3000
-    const link = `http://localhost:${PORT}/delete/${email}/${f}/${s}`
+    const link = `https://crypto-alerter01.onrender.com/delete/${email}/${f}/${s}`
 
 
     var transporter = nodemailer.createTransport({
