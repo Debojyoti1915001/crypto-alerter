@@ -41,7 +41,7 @@ router.get('/verify/:email/:first/:second', async(req, res) => {
     const email=req.params.email
     const second=req.params.second
     const crypto = new Crypto({
-        second,
+        first,
         second,
         email,
 
