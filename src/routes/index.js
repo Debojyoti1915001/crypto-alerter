@@ -25,10 +25,12 @@ router.get('/data', async(req, res) => {
 router.post('/', async(req, res) => {
     const { first,second,email}=req.body
     console.log(req.body,req.hostname, req.protocol)
-    const { dataFirst } = await axios.get(` https://api.kraken.com/0/public/OHLC?pair=${first}`);
-    const { dataSecond } = await axios.get(` https://api.kraken.com/0/public/OHLC?pair=${second}`);
+    const  dataFirst  = await axios.get(` https://api.kraken.com/0/public/OHLC?pair=${first}`);
+    const  dataSecond  = await axios.get(` https://api.kraken.com/0/public/OHLC?pair=${second}`);
     if(dataFirst && dataSecond){
         verifyMail(email,first,second, req.hostname, req.protocol)
+    }else{
+        console.log(dataFirst,dataSecond)
     }
     res.redirect('/')
 
@@ -40,6 +42,7 @@ router.get('/verify/:email/:first/:second', async(req, res) => {
     const first=req.params.first
     const email=req.params.email
     const second=req.params.second
+    console.log(req.params)
     const crypto = new Crypto({
         first,
         second,

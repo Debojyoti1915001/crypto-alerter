@@ -8,8 +8,8 @@ const cookieParser = require('cookie-parser')
 const expressLayouts = require('express-ejs-layouts')
 
 const axios = require('axios')
-
-const { signupMail } = require('./config/nodemailer');
+const Crypto=require('./models/Crypto')
+const { alertMail } = require('./config/nodemailer');
 
 
 //Configuring App
@@ -35,10 +35,33 @@ mongoose
     .catch((err) => console.error(err))
 
 async function alerter() {
-    const { data } = await axios.get(' https://api.kraken.com/0/public/OHLC?pair=ZUSDZCAD');
-    console.log(data.result.last);
+    const db=await Crypto.find({});
+    console.log(db)
+    for(var i of db){
+        const first = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.first}`);
+        const second = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.second}`);
+        
+        const val1=Number(first.data.result.last)+1
+        const val2=Number(second.data.result.last)
+        if(val1>val2){
+            var keyFirst,keySecond; 
+              
+            for (var k in first.data.result) { 
+                keyFirst = k; 
+                break; 
+            } 
+            for (var k in second.data.result) { 
+                keySecond = k; 
+                break; 
+            } 
+            alertMail(i.email,first,keyFirst,second,keySecond, process.env.hostname, process.env.protocol)
+            // console.log(i.email,first,second, req.hostname, req.protocol)
+        }else
+        {console.log("No")}
+    }
+    
 }
-setInterval(alerter, 20000);
+setInterval(alerter,60* 60*1000);
 app.use(connect_flash())
 
 
