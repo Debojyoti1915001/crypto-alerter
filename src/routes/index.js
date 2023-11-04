@@ -4,7 +4,6 @@ const router = express.Router()
 
 const Crypto=require('../models/Crypto')
 router.get('/', async(req, res) => {
-    
     res.render('./userViews/post')
 
 });
@@ -22,14 +21,15 @@ router.get('/data', async(req, res) => {
 
 });
 router.post('/', async(req, res) => {
-    
-    const crypto = new Crypto({
-        first,
-        second,
-        email,
+    const { first,second,email}=req.body
+    console.log(req.body)
+    // const crypto = new Crypto({
+    //     first,
+    //     second,
+    //     email,
 
-    })
-    let saveCrypto = await crypto.save()
+    // })
+    // let saveCrypto = await crypto.save()
     res.redirect('/')
 
 });
