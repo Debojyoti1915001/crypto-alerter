@@ -1,82 +1,108 @@
-/*You Can Change "Color" & "Font".
-For Good Working Please Don't Change Other Things*/
 
 
-body {
-  background-color: #b881f1; /*Color*/
-  font-family: "Roboto", sans-serif; /*Font*/
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
+  body {
+    background-color: #b881f1; /*Color*/
+    font-family: "Roboto", sans-serif; /*Font*/
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .table {
+    font-size: 10px;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 50px;
+    width: 30%;
+  }
+  
+  .top {
+    background-color: #8e44ad; /*Color*/
+    border-radius: 15px 15px 0px 0px;
+    height: 50px;
+    width: 80%;
+    margin-left: 0%;
+    border-bottom: 1px solid #95a5a6; /*Color*/
+    color: #ecf0f1; /*Color*/
+    font-weight: bold;
+  }
+  
+  .inside {
+    background-color: #ecf0f1; /*Color*/
+    height: 50px;
+    width: 80%;
+    border-bottom: 0.25px solid #95a5a6; /*Color*/
+  }
+  
+  .bottom {
+    background-color: #8e44ad; /*Color*/
+    border-radius: 0px 0px 15px 15px;
+    height: 50px;
+    width: 80%;
+    color: #ecf0f1; /*Color*/
+    font-weight: bold;
+  }
+  
+  .left {
+    width: 30%;
+    padding-top: 15px;
+    display: inline-block;
+    text-align: center;
+  }
+  
+  .center {
+    width: 30%;
+    padding-top: 15px;
+    display: inline-block;
+    float: center;
+    text-align: center;
+  }
+  
+  .right {
+    width: 30%;
+    padding-top: 15px;
+    display: inline-block;
+    text-align: center;
+  }
+  
+  .input {
+    text-align: center;
+    margin-left: 30%;
+    margin-right: 30%;
+    width: 40%;
+    height: 50px;
+    border-radius: 15px;
+    border: 1px solid #8e44ad; /*Color*/
+  }
+  
+  .input:hover {
+    border: 2px solid #8e44ad; /*Color*/
+  }
+  
 
-.table {
-  margin-left: 20%;
-  margin-right: 20%;
-  margin-top: 50px;
-  width: 30%;
-}
-
-.top {
-  background-color: #8e44ad; /*Color*/
-  border-radius: 15px 15px 0px 0px;
-  height: 50px;
-  width: 60%;
-  border-bottom: 1px solid #95a5a6; /*Color*/
-  color: #ecf0f1; /*Color*/
-  font-weight: bold;
-}
-
-.inside {
-  background-color: #ecf0f1; /*Color*/
-  height: 50px;
-  width: 60%;
-  border-bottom: 0.25px solid #95a5a6; /*Color*/
-}
-
-.bottom {
-  background-color: #8e44ad; /*Color*/
-  border-radius: 0px 0px 15px 15px;
-  height: 50px;
-  width: 60%;
-  color: #ecf0f1; /*Color*/
-  font-weight: bold;
-}
-
-.left {
-  width: 30%;
-  padding-top: 15px;
-  display: inline-block;
-  text-align: center;
-}
-
-.center {
-  width: 30%;
-  padding-top: 15px;
-  display: inline-block;
-  float: center;
-  text-align: center;
-}
-
-.right {
-  width: 30%;
-  padding-top: 15px;
-  display: inline-block;
-  text-align: center;
-}
-
-.input {
-  text-align: center;
-  margin-left: 40%;
-  margin-right: 40%;
-  width: 20%;
-  height: 50px;
-  border-radius: 15px;
-  border: 1px solid #8e44ad; /*Color*/
-}
-
-.input:hover {
-  border: 2px solid #8e44ad; /*Color*/
-}
 
 
+  @media (max-width: 650px) {
+    .table {
+      font-size: 10px;
+    }
+    .left {
+      width: 30%;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    .center {
+      width: 30%;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    .right {
+      width: 30%;
+      display: inline-block;
+      text-align: center;
+    }
+  }
+
+  
