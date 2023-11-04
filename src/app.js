@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser')
 const expressLayouts = require('express-ejs-layouts')
 
 const axios = require('axios')
-const Crypto=require('./models/Crypto')
+const Crypto = require('./models/Crypto')
 const { alertMail } = require('./config/nodemailer');
 
 
@@ -35,33 +35,37 @@ mongoose
     .catch((err) => console.error(err))
 
 async function alerter() {
-    const db=await Crypto.find({});
+    const db = await Crypto.find({});
     console.log(db)
-    for(var i of db){
+    for (var i of db) {
         const first = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.first}`);
         const second = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.second}`);
+
         
-        const val1=Number(first.data.result.last)
-        const val2=Number(second.data.result.last)
-        if(val1>val2){
-            var keyFirst,keySecond; 
-              
-            for (var k in first.data.result) { 
-                keyFirst = k; 
-                break; 
-            } 
-            for (var k in second.data.result) { 
-                keySecond = k; 
-                break; 
-            } 
-            alertMail(i.email,first,keyFirst,second,keySecond, process.env.hostname, process.env.protocol)
+        var keyFirst, keySecond;
+        for (var k in first.data.result) {
+            keyFirst = k;
+            break;
+        }
+        for (var k in second.data.result) {
+            keySecond = k;
+            break;
+        }
+        
+        const keys = Object.keys(first.data.result);
+        const val1 = first.data.result[keys[0]][0][1];
+        const keys1 = Object.keys(second.data.result);
+        const val2 = second.data.result[keys1[0]][0][1];
+        console.log(val1,val2)
+        if (val1 > val2) {
+            alertMail(i.email, val1, keyFirst, val2, keySecond, process.env.hostname, process.env.protocol)
             // console.log(i.email,first,second, req.hostname, req.protocol)
-        }else
-        {console.log("No")}
+            console.log("Yes")
+        } else { console.log("No") }
     }
-    
+
 }
-setInterval(alerter,100*5000);
+setInterval(alerter,  60*60*1000);
 app.use(connect_flash())
 
 

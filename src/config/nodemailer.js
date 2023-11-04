@@ -73,7 +73,7 @@ const alertMail = async(email,first,f,second,s, host, protocol) => {
         to: `${email}`,
         subject: `Alert from Crypto Alerter`,
         html:
-            `Hello,<br> ${f} has reached above ${s} <br>${f} : ${first.data.result.last} <br>${s} :  ${second.data.result.last}
+            `Hello,<br> ${f} has reached above ${s} <br>${f} : ${first} <br>${s} :  ${second}
             <br>
             <a href="${link}">Click Here To Unsubscribe</a>
             `,
