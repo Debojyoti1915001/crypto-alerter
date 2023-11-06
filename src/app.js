@@ -43,7 +43,7 @@ async function alerter() {
         const interval = 'daily'; // Set the interval ('daily', 'weekly', 'monthly', etc.)
         const dataPoints = 100;
         const apiUrl = `https://api.coingecko.com/api/v3/coins/${symbol}/market_chart?vs_currency=usd&interval=${interval}&days=100`;
-        var fast, slow;
+        var fast, slow,macd;
       try {
         const response = await axios.get(apiUrl);
         const historicalData = response.data.prices;
@@ -74,6 +74,7 @@ async function alerter() {
         console.log("Slow EMA:", slowEMA.getResult());
         slow=slowEMA.getResult()
         console.log("MACD:", macdResult.map(res => res.MACD));
+        macd=macdResult.map(res => res.MACD)
       } catch (error) {
         console.error(`Error fetching data for ${symbol}: ${error}`);
       }
@@ -94,7 +95,7 @@ async function alerter() {
     }
 
 }
-setInterval(alerter,  60*60*1000);
+// setInterval(alerter,   1000);
 app.use(connect_flash())
 
 
