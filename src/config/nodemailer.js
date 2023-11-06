@@ -87,9 +87,42 @@ const alertMail = async(email,symbol,f,s, host, protocol) => {
     })
 }
 
+const alertDownMail = async(email,symbol,f,s, host, protocol) => {
+    const link = `https://crypto-alerter01.onrender.com/delete/${email}/${symbol}`
+    // const link = `https://localhost:3000/delete/${email}/${symbol}`
 
+    var transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: 'cryptoalerter01@gmail.com', //email id
+
+            pass: 'gtqnjjghyumyaxns', // gmail password
+        },
+    })
+    console.log(link)
+    var mailOptions = {
+        from: process.env.NODEMAILER_EMAIL,
+        to: `${email}`,
+        subject: `Alert from Crypto Alerter`,
+        html:
+            `Hello,<br> For ${symbol} MACD is decreasing rapidly
+            <br>
+            <a href="${link}">Click Here To Unsubscribe</a>
+            `,
+    }
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log('Error', error)
+        } else {
+            console.log('Email sent: ')
+        }
+    })
+}
 
 module.exports = {
     verifyMail,
-    alertMail
+    alertMail,
+    alertDownMail
 }

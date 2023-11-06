@@ -9,7 +9,7 @@ const expressLayouts = require('express-ejs-layouts')
 
 const axios = require('axios')
 const Crypto = require('./models/Crypto')
-const { alertMail } = require('./config/nodemailer');
+const { alertMail,alertDownMail } = require('./config/nodemailer');
 
 
 const technicalindicators = require('technicalindicators');
@@ -79,9 +79,12 @@ async function alerter() {
         console.error(`Error fetching data for ${symbol}: ${error}`);
       }
       var down=0;
-    //   for(var j=0;j<100;j++){
-    //     if()
-    //   }
+      for(var j=1;j<100;j++){
+        if(macd[j]<macd[j-1])down++
+        if(down>70){
+            alertDownMail(i.email, symbol)
+        }
+      }
 
       for(var j=0;j<100;j++){
         if (fast[j] < slow[j]) {
