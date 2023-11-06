@@ -198,7 +198,7 @@ Near there you can see "!^^^!"-->
     <div class="top">
       <div class="left">Name</div>
       
-      <div class="right">Base | Quote</div>
+      <div class="right">Symbol</div>
       <div class="center">Copy</div>
     </div>
     <div id="myTable">
@@ -206,9 +206,9 @@ Near there you can see "!^^^!"-->
       <div>
         <div class="inside">
           <span class="left" ><p id="copyText"><%=i.name%></p></span>
-          <span class="right"><%= i.base %>  |  <%= i.quote %></span>
+          <span class="right"><%= i.symbol %></span>
           <span class="center">
-            <button class="custom-button" onclick="copyToClipboard('<%=i.name%>')">Copy!</button>
+            <button class="custom-button" onclick="copyToClipboard('<%=i.id%>')">Copy!</button>
           </span>
         </div>
       </div>

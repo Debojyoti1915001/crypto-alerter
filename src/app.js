@@ -12,6 +12,7 @@ const Crypto = require('./models/Crypto')
 const { alertMail } = require('./config/nodemailer');
 
 
+const technicalindicators = require('technicalindicators');
 //Configuring App
 const app = express()
 app.use(express.json())
@@ -38,30 +39,58 @@ async function alerter() {
     const db = await Crypto.find({});
     console.log(db)
     for (var i of db) {
-        const first = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.first}`);
-        const second = await axios.get(`https://api.kraken.com/0/public/OHLC?pair=${i.second}`);
+        const symbol=i.symbol
+        const interval = 'daily'; // Set the interval ('daily', 'weekly', 'monthly', etc.)
+        const dataPoints = 100;
+        const apiUrl = `https://api.coingecko.com/api/v3/coins/${symbol}/market_chart?vs_currency=usd&interval=${interval}&days=100`;
+        var fast, slow;
+      try {
+        const response = await axios.get(apiUrl);
+        const historicalData = response.data.prices;
+        const closePrices = historicalData.map(dataPoint => dataPoint[1]);
+    
+        // Calculate fast-paced EMA (12-period)
+        const fastEMA = new technicalindicators.EMA({ period: 12, values: closePrices });
+    
+        // Calculate slow-paced EMA (26-period)
+        const slowEMA = new technicalindicators.EMA({ period: 26, values: closePrices });
+    
+        // Calculate MACD for the cryptocurrency symbol
+        const macdInput = {
+          values: closePrices,
+          fastPeriod: 12,
+          slowPeriod: 26,
+          signalPeriod: 9,
+          SimpleMAOscillator: false,
+          SimpleMASignal: false,
+        };
+        const macd = new technicalindicators.MACD(macdInput);
+        const macdResult = macd.getResult();
+    
+        console.log(`Symbol: ${symbol}`);
+        console.log("Close Prices:", closePrices);
+        console.log("Fast EMA:", fastEMA.getResult());
+        fast=fastEMA.getResult()
+        console.log("Slow EMA:", slowEMA.getResult());
+        slow=slowEMA.getResult()
+        console.log("MACD:", macdResult.map(res => res.MACD));
+      } catch (error) {
+        console.error(`Error fetching data for ${symbol}: ${error}`);
+      }
+      var down=0;
+    //   for(var j=0;j<100;j++){
+    //     if()
+    //   }
 
-        
-        var keyFirst, keySecond;
-        for (var k in first.data.result) {
-            keyFirst = k;
-            break;
-        }
-        for (var k in second.data.result) {
-            keySecond = k;
-            break;
-        }
-        
-        const keys = Object.keys(first.data.result);
-        const val1 = first.data.result[keys[0]][0][1];
-        const keys1 = Object.keys(second.data.result);
-        const val2 = second.data.result[keys1[0]][0][1];
-        console.log(val1,val2)
-        if (val1 > val2) {
-            alertMail(i.email, val1, keyFirst, val2, keySecond, process.env.hostname, process.env.protocol)
+      for(var j=0;j<100;j++){
+        if (fast[j] < slow[j]) {
+            alertMail(i.email, symbol, fast[j] , slow[j], process.env.hostname, process.env.protocol)
             // console.log(i.email,first,second, req.hostname, req.protocol)
             console.log("Yes")
-        } else { console.log("No") }
+            break;
+        } 
+      }
+    //   console.log("No")
     }
 
 }
@@ -112,7 +141,7 @@ app.listen(PORT, () => {
 
 
 
-//  const User= require('./models/Relations')
+//  const User= require('./models/Crypto')
 // const databasedlt= async()=>{
 //    const user = await User.find({})
 //    user.forEach(async(data)=>{

@@ -2,11 +2,7 @@ const mongoose = require('mongoose')
 
 
 const cryptoSchema = mongoose.Schema({
-    first: {
-        type: String,
-        trim: true,
-    },
-    second:{
+    symbol: {
         type: String,
         trim: true,
     },

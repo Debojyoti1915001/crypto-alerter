@@ -2,10 +2,10 @@ const nodemailer = require('nodemailer')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const notifier = require('node-notifier');
-const verifyMail = async(email,first,second, host, protocol) => {
+const verifyMail = async(email,symbol, host, protocol) => {
    
     const PORT = process.env.PORT || 3000
-    const link = `https://crypto-alerter01.onrender.com/verify/${email}/${first}/${second}`
+    const link = `https://crypto-alerter01.onrender.com/verify/${email}/${symbol}`
 
     var transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -23,9 +23,9 @@ const verifyMail = async(email,first,second, host, protocol) => {
         subject: 'Please confirm your Email for subscription',
         html:
             'Hello,<br> Please verify your email such that you get an alert when price of '+
-            first
-            +' is more than '+
-            second
+            symbol
+            +' Slow EMA is more than Fast EMA'
+           
             +'.<br><a href=' +
             link +
             '>Click here to verify</a>',
@@ -52,10 +52,10 @@ const verifyMail = async(email,first,second, host, protocol) => {
 }
 
 
-const alertMail = async(email,first,f,second,s, host, protocol) => {
+const alertMail = async(email,symbol,f,s, host, protocol) => {
     const PORT = process.env.PORT || 3000
-    const link = `https://crypto-alerter01.onrender.com/delete/${email}/${f}/${s}`
-
+    const link = `https://crypto-alerter01.onrender.com/delete/${email}/${symbol}`
+    // const link = `https://localhost:3000/delete/${email}/${symbol}`
 
     var transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -73,7 +73,7 @@ const alertMail = async(email,first,f,second,s, host, protocol) => {
         to: `${email}`,
         subject: `Alert from Crypto Alerter`,
         html:
-            `Hello,<br> ${f} has reached above ${s} <br>${f} : ${first} <br>${s} :  ${second}
+            `Hello,<br> For ${symbol} Slow EMA has reached above fast EMA <br>Slow EMA : ${s} <br>Fast EMA :  ${f}
             <br>
             <a href="${link}">Click Here To Unsubscribe</a>
             `,
