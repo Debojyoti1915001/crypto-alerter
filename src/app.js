@@ -86,8 +86,8 @@ async function alerter() {
         }
       }
 
-      for(var j=0;j<100;j++){
-        if (fast[j] < slow[j]) {
+      for(var j=1;j<100;j++){
+        if (fast[j-1] < slow[j-1]&&fast[j] > slow[j]) {
             alertMail(i.email, symbol, fast[j] , slow[j], process.env.hostname, process.env.protocol)
             // console.log(i.email,first,second, req.hostname, req.protocol)
             console.log("Yes")
@@ -98,7 +98,7 @@ async function alerter() {
     }
 
 }
-// setInterval(alerter,   1000);
+setInterval(alerter,   60*60*1000);
 app.use(connect_flash())
 
 
