@@ -9,10 +9,11 @@ const expressLayouts = require('express-ejs-layouts')
 
 const axios = require('axios')
 const Crypto = require('./models/Crypto')
-const { alertMail,alertDownMail } = require('./config/nodemailer');
+const { alertMail, alertDownMail } = require('./config/nodemailer');
 
+const ccxt = require('ccxt');
 
-const technicalindicators = require('technicalindicators');
+const tulind = require('tulind');
 //Configuring App
 const app = express()
 app.use(express.json())
@@ -26,79 +27,85 @@ const PORT = process.env.PORT || 3000
 
 //Mongoose connection
 mongoose
-    .connect(process.env.MONGODB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false,
-        useCreateIndex: true,
-    })
-    .then(() => console.log('Connected to mongo server'))
-    .catch((err) => console.error(err))
+  .connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  })
+  .then(() => console.log('Connected to mongo server'))
+  .catch((err) => console.error(err))
+
+
+
+// Function to fetch historical price data
+async function fetchHistoricalData(symbol, timeframe, limit) {
+  const exchange = new ccxt.binance(); // Change this to your desired exchange
+  const ohlcv = await exchange.fetchOHLCV(symbol, timeframe, undefined, limit);
+  return ohlcv.map(data => data[4]); // Closing prices
+}
+
+// Function to calculate MACD
+function calculateMACD(data) {
+  return new Promise((resolve, reject) => {
+    tulind.indicators.macd.indicator([data], [12, 26, 9], (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({
+          fastMACD: results[0],
+          slowMACD: results[1],
+          signalLine: results[2],
+        });
+      }
+    });
+  });
+}
+
+
+
 
 async function alerter() {
-    const db = await Crypto.find({});
-    console.log(db)
-    for (var i of db) {
-        const symbol=i.symbol
-        const interval = 'daily'; // Set the interval ('daily', 'weekly', 'monthly', etc.)
-        const dataPoints = 100;
-        const apiUrl = `https://api.coingecko.com/api/v3/coins/${symbol}/market_chart?vs_currency=usd&interval=${interval}&days=100`;
-        var fast, slow,macd;
-      try {
-        const response = await axios.get(apiUrl);
-        const historicalData = response.data.prices;
-        const closePrices = historicalData.map(dataPoint => dataPoint[1]);
-    
-        // Calculate fast-paced EMA (12-period)
-        const fastEMA = new technicalindicators.EMA({ period: 12, values: closePrices });
-    
-        // Calculate slow-paced EMA (26-period)
-        const slowEMA = new technicalindicators.EMA({ period: 26, values: closePrices });
-    
-        // Calculate MACD for the cryptocurrency symbol
-        const macdInput = {
-          values: closePrices,
-          fastPeriod: 12,
-          slowPeriod: 26,
-          signalPeriod: 9,
-          SimpleMAOscillator: false,
-          SimpleMASignal: false,
-        };
-        const macd = new technicalindicators.MACD(macdInput);
-        const macdResult = macd.getResult();
-    
-        console.log(`Symbol: ${symbol}`);
-        console.log("Close Prices:", closePrices);
-        console.log("Fast EMA:", fastEMA.getResult());
-        fast=fastEMA.getResult()
-        console.log("Slow EMA:", slowEMA.getResult());
-        slow=slowEMA.getResult()
-        console.log("MACD:", macdResult.map(res => res.MACD));
-        macd=macdResult.map(res => res.MACD)
-      } catch (error) {
-        console.error(`Error fetching data for ${symbol}: ${error}`);
-      }
-      var down=0;
-      for(var j=1;j<100;j++){
-        if(macd[j]<macd[j-1])down++
-        if(down>70){
-            alertDownMail(i.email, symbol)
-        }
-      }
+  const db = await Crypto.find({});
+  console.log(db)
+  // const symbols = ['BTC/USDT', 'ETH/USDT', 'XRP/USDT'];
+  const timeframe = '1d';
+  const limit = 100; // Number of historical data points to fetch
+  for (var i of db) {
+    const historicalData = await fetchHistoricalData(i.symbol, timeframe, limit);
+    const closingPrices = historicalData.map(data => parseFloat(data));
 
-      for(var j=1;j<100;j++){
-        if (fast[j-1] < slow[j-1]&&fast[j] > slow[j]) {
-            alertMail(i.email, symbol, fast[j] , slow[j], process.env.hostname, process.env.protocol)
-            // console.log(i.email,first,second, req.hostname, req.protocol)
-            console.log("Yes")
-            break;
-        } 
+    const { fastMACD, slowMACD, signalLine } = await calculateMACD(closingPrices);
+
+    console.log(`MACD for ${i.symbol}`);
+    console.log('Fast MACD Line:', fastMACD);
+    console.log('Slow MACD Line:', slowMACD);
+    console.log('Signal Line:', signalLine);
+    console.log('-----------------------------');
+    const fast = fastMACD
+    const slow = slowMACD
+    var down = 0;
+    for (var j = 1; j < 100; j++) {
+      if (fast[j] < fast[j - 1]) down++
+      if (down > 70) {
+        alertDownMail(i.email, i.symbol)
       }
-    //   console.log("No")
     }
 
+    for (var j = 1; j < 100; j++) {
+      if (slow[i - 1] > fast[i - 1] && slow[i] < fast[i]) {
+        alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol)
+        // console.log(i.email,first,second, req.hostname, req.protocol)
+        console.log("Yes")
+        break;
+      }
+    }
+      console.log("No")
+
+
+  }
 }
-setInterval(alerter,   60*60*1000);
+setInterval(alerter, 5 * 1000);
 app.use(connect_flash())
 
 
@@ -115,20 +122,20 @@ app.set('view engine', 'ejs')
 //body parser
 app.use(express.urlencoded({ extended: true }))
 app.use(
-    session({
-        secret: process.env.JWT_SECRET,
-        resave: true,
-        saveUninitialized: true,
-    })
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: true,
+    saveUninitialized: true,
+  })
 )
 
 
 // global var
 app.use((req, res, next) => {
-    res.locals.success_msg = req.flash('success_msg')
-    res.locals.error_msg = req.flash('error_msg')
+  res.locals.success_msg = req.flash('success_msg')
+  res.locals.error_msg = req.flash('error_msg')
 
-    next()
+  next()
 })
 
 //Setup for rendering static pages
@@ -139,7 +146,7 @@ const indexRoutes = require('./routes/index')
 app.use('/', indexRoutes)
 //Start the server
 app.listen(PORT, () => {
-    console.log('Server listening on port', PORT)
+  console.log('Server listening on port', PORT)
 })
 
 
@@ -166,6 +173,3 @@ app.listen(PORT, () => {
 //    console.log("deleted")
 // }
 // databasedlt()
-
-
-
