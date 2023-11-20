@@ -5,7 +5,7 @@ const { verifyMail } = require('../config/nodemailer');
 const Crypto = require('../models/Crypto')
 const notifier = require('node-notifier');
 const tulind = require('tulind');
-
+const fs=require('fs')
 const ccxt = require('ccxt');
 const technicalindicators = require('technicalindicators');
 router.get('/', async (req, res) => {
@@ -15,17 +15,24 @@ router.get('/', async (req, res) => {
 router.get('/data', async (req, res) => {
 
 
-  const exchange = new ccxt.binance(); // Change this to your desired exchange
-  var allCryptoPairData=[]
+  var allCryptoPairData = []
   try {
-    await exchange.loadMarkets();
-    const symbols = Object.keys(exchange.markets);
-    console.log('Available Symbols:', symbols);
-    allCryptoPairData=symbols
-  } catch (error) {
-    console.error('Error fetching symbols:', error.message);
+    fs.readFile('object.json', 'utf8', function (err, data) {
+      if (err) throw err;
+      obj = JSON.parse(data);
+      allCryptoPairData=obj.symbols
+      res.render('./userViews/index', { allCryptoPairData })
+    });
+
+    // You can send the JSON data as a response
+    
+  } catch (err) {
+    console.error('Error reading JSON file:', err.message);
+    res.status(500).send('Internal Server Error');
   }
-  res.render('./userViews/index', { allCryptoPairData })
+
+  
+  
 });
 
 router.post('/', async (req, res) => {
@@ -96,7 +103,7 @@ router.get('/verify/:email/:first/:second', async (req, res) => {
 router.get('/delete/:email/:first/:second', async (req, res) => {
   const first = req.params.first
   const second = req.params.second
-  const symbol=first+"/"+second
+  const symbol = first + "/" + second
   const email = req.params.email
   const deleteCrypto = await Crypto.findOneAndDelete({ symbol, email })
   res.redirect('/')
