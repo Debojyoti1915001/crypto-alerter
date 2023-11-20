@@ -108,7 +108,7 @@ async function alerter() {
       console.log("No")
     }
 }
-// setInterval(alerter, 24*60*60* 1000);
+setInterval(alerter, 24*60*60* 1000);
 app.use(connect_flash())
 
 
