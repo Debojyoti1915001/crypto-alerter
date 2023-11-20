@@ -85,29 +85,30 @@ async function alerter() {
     const fast = fastMACD
     const slow = slowMACD
     
-    for (var j = 1; j < 100; j++) {
-      console.log(fast[j-1]," ",fast[j])
-      if (fast[j-1] > fast[j]) {
+    // for (var j = 1; j < slow.length; j++) {
+      // console.log(fast[j-1]," ",fast[j])
+      if (fast[fast.length-2] > fast[fast.length-1]) {
+        // console.log("1 ",j);
         alertDownMail(i.email, i.symbol)
         // console.log(i.email,first,second, req.hostname, req.protocol)
         console.log("Yes")
         break;
       }
-    }
-      console.log("No")
-  
-    for (var j = 0; j < 100; j++) {
-      if (slow[j] < fast[j]) {
+    // }
+     
+    // for (var j = 0; j < slow.length; j++) {
+      if (slow[slow.length-1] < fast[fast.length-1]) {
+        // console.log("2 ",j);
         alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol)
         // console.log(i.email,first,second, req.hostname, req.protocol)
         console.log("Yes")
-        break;
+        // break;
       }
-    }
+    // }
       console.log("No")
     }
 }
-// setInterval(alerter, 5* 1000);
+// setInterval(alerter, 24*60*60* 1000);
 app.use(connect_flash())
 
 

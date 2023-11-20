@@ -73,7 +73,7 @@ const alertMail = async(email,symbol,f,s, host, protocol) => {
         to: `${email}`,
         subject: `Alert from Crypto Alerter`,
         html:
-            `Hello,<br> For ${symbol} Slow EMA has reached above fast EMA <br>Slow EMA : ${s} <br>Fast EMA :  ${f}
+            `Hello,<br> For ${symbol} Fast MACD has reached above Slow MACD <br>Slow EMA : ${s} <br>Fast EMA :  ${f}
             <br>
             <a href="${link}">Click Here To Unsubscribe</a>
             `,
