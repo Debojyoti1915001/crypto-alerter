@@ -9,7 +9,7 @@ const expressLayouts = require('express-ejs-layouts')
 
 const axios = require('axios')
 const Crypto = require('./models/Crypto')
-const { alertMail, alertDownMail } = require('./config/nodemailer');
+const { alertMail, alertDownMail,alertUpMail } = require('./config/nodemailer');
 
 const ccxt = require('ccxt');
 
@@ -84,16 +84,20 @@ async function alerter() {
     console.log('-----------------------------');
     const fast = fastMACD
     const slow = slowMACD
-    var down = 0;
+    
     for (var j = 1; j < 100; j++) {
-      if (fast[j] < fast[j - 1]) down++
-      if (down > 70) {
+      console.log(fast[j-1]," ",fast[j])
+      if (fast[j-1] > fast[j]) {
         alertDownMail(i.email, i.symbol)
+        // console.log(i.email,first,second, req.hostname, req.protocol)
+        console.log("Yes")
+        break;
       }
     }
-
-    for (var j = 1; j < 100; j++) {
-      if (slow[i - 1] > fast[i - 1] && slow[i] < fast[i]) {
+      console.log("No")
+  
+    for (var j = 0; j < 100; j++) {
+      if (slow[j] < fast[j]) {
         alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol)
         // console.log(i.email,first,second, req.hostname, req.protocol)
         console.log("Yes")
@@ -101,11 +105,9 @@ async function alerter() {
       }
     }
       console.log("No")
-
-
-  }
+    }
 }
-setInterval(alerter, 5 * 1000);
+// setInterval(alerter, 5* 1000);
 app.use(connect_flash())
 
 

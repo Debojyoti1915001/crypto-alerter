@@ -196,19 +196,19 @@ Near there you can see "!^^^!"-->
     <!--It's top part of table.
         It isn't searching by search bar.-->
     <div class="top">
-      <div class="left">Name</div>
+      <div class="left">Symbol</div>
       
-      <div class="right">Symbol</div>
+      <div class="right">...</div>
       <div class="center">Copy</div>
     </div>
     <div id="myTable">
       <% for(i of allCryptoPairData){ %>
       <div>
         <div class="inside">
-          <span class="left" ><p id="copyText"><%=i.name%></p></span>
-          <span class="right"><%= i.symbol %></span>
+          <span class="left" ><p id="copyText"><%=i%></p></span>
+          <span class="right">Click Right to Copy</span>
           <span class="center">
-            <button class="custom-button" onclick="copyToClipboard('<%=i.id%>')">Copy!</button>
+            <button class="custom-button" onclick="copyToClipboard('<%=i%>')">Copy!</button>
           </span>
         </div>
       </div>
