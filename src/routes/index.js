@@ -4,7 +4,6 @@ const router = express.Router()
 const { verifyMail } = require('../config/nodemailer');
 const Crypto = require('../models/Crypto')
 const notifier = require('node-notifier');
-const tulind = require('tulind');
 const fs=require('fs')
 const ccxt = require('ccxt');
 const technicalindicators = require('technicalindicators');

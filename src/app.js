@@ -13,7 +13,6 @@ const { alertMail, alertDownMail,alertUpMail } = require('./config/nodemailer');
 
 const ccxt = require('ccxt');
 const technicalindicators = require('technicalindicators');
-const tulind = require('tulind');
 //Configuring App
 const app = express()
 app.use(express.json())
