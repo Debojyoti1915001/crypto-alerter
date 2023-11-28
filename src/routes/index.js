@@ -45,21 +45,25 @@ router.post('/', async (req, res) => {
   }
 
   // Function to calculate MACD
-  function calculateMACD(data) {
-    return new Promise((resolve, reject) => {
-      tulind.indicators.macd.indicator([data], [12, 26, 9], (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({
-            fastMACD: results[0],
-            slowMACD: results[1],
-            signalLine: results[2],
-          });
-        }
-      });
-    });
-  }
+  // Function to calculate MACD using technicalindicators
+function calculateMACD(data) {
+  const input = {
+    values: data,
+    fastPeriod: 12,
+    slowPeriod: 26,
+    signalPeriod: 9,
+    SimpleMAOscillator: false,
+    SimpleMASignal: false,
+  };
+
+  const macdOutput = technicalindicators.MACD.calculate(input);
+
+  return {
+    fastMACD: macdOutput.map(entry => entry.histogram),
+    slowMACD: macdOutput.map(entry => entry.signal),
+    signalLine: macdOutput.map(entry => entry.MACD),
+  };
+}
   const { symbol, email } = req.body
   const timeframe = '1d';
   const limit = 100;
@@ -81,7 +85,6 @@ router.post('/', async (req, res) => {
       sound: true,
       wait: true
     },)
-    console.log(dataFirst, dataSecond)
   }
   res.redirect('/')
 

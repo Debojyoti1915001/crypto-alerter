@@ -12,7 +12,7 @@ const Crypto = require('./models/Crypto')
 const { alertMail, alertDownMail,alertUpMail } = require('./config/nodemailer');
 
 const ccxt = require('ccxt');
-
+const technicalindicators = require('technicalindicators');
 const tulind = require('tulind');
 //Configuring App
 const app = express()
@@ -45,68 +45,62 @@ async function fetchHistoricalData(symbol, timeframe, limit) {
   return ohlcv.map(data => data[4]); // Closing prices
 }
 
-// Function to calculate MACD
+// Function to calculate MACD using technicalindicators
 function calculateMACD(data) {
-  return new Promise((resolve, reject) => {
-    tulind.indicators.macd.indicator([data], [12, 26, 9], (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({
-          fastMACD: results[0],
-          slowMACD: results[1],
-          signalLine: results[2],
-        });
-      }
-    });
-  });
-}
+  const input = {
+    values: data,
+    fastPeriod: 12,
+    slowPeriod: 26,
+    signalPeriod: 9,
+    SimpleMAOscillator: false,
+    SimpleMASignal: false,
+  };
 
+  const macdOutput = technicalindicators.MACD.calculate(input);
+
+  return {
+    fastMACD: macdOutput.map(entry => entry.histogram),
+    slowMACD: macdOutput.map(entry => entry.signal),
+    signalLine: macdOutput.map(entry => entry.MACD),
+  };
+}
 
 
 
 async function alerter() {
   const db = await Crypto.find({});
-  console.log(db)
-  // const symbols = ['BTC/USDT', 'ETH/USDT', 'XRP/USDT'];
+  console.log(db);
   const timeframe = '1d';
-  const limit = 100; // Number of historical data points to fetch
-  for (var i of db) {
+  const limit = 100;
+
+  for (const i of db) {
     const historicalData = await fetchHistoricalData(i.symbol, timeframe, limit);
     const closingPrices = historicalData.map(data => parseFloat(data));
 
-    const { fastMACD, slowMACD, signalLine } = await calculateMACD(closingPrices);
+    const { fastMACD, slowMACD, signalLine } = calculateMACD(closingPrices);
 
     console.log(`MACD for ${i.symbol}`);
     console.log('Fast MACD Line:', fastMACD);
     console.log('Slow MACD Line:', slowMACD);
     console.log('Signal Line:', signalLine);
     console.log('-----------------------------');
-    const fast = fastMACD
-    const slow = slowMACD
-    
-    // for (var j = 1; j < slow.length; j++) {
-      // console.log(fast[j-1]," ",fast[j])
-      if (fast[fast.length-2] > fast[fast.length-1]) {
-        // console.log("1 ",j);
-        alertDownMail(i.email, i.symbol)
-        // console.log(i.email,first,second, req.hostname, req.protocol)
-        console.log("Yes")
-        break;
-      }
-    // }
-     
-    // for (var j = 0; j < slow.length; j++) {
-      if (slow[slow.length-1] < fast[fast.length-1]) {
-        // console.log("2 ",j);
-        alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol)
-        // console.log(i.email,first,second, req.hostname, req.protocol)
-        console.log("Yes")
-        // break;
-      }
-    // }
-      console.log("No")
+
+    const fast = fastMACD;
+    const slow = slowMACD;
+
+    if (fast[fast.length - 2] > fast[fast.length - 1]) {
+      alertDownMail(i.email, i.symbol);
+      console.log('Yes');
+      break;
     }
+
+    if (slow[slow.length - 1] < fast[fast.length - 1]) {
+      alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol);
+      console.log('Yes');
+    }
+
+    console.log('No');
+  }
 }
 setInterval(alerter, 24*60*60* 1000);
 app.use(connect_flash())
