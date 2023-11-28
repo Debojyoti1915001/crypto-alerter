@@ -67,41 +67,51 @@ function calculateMACD(data) {
 
 
 async function alerter() {
-  const db = await Crypto.find({});
-  console.log(db);
-  const timeframe = '1d';
-  const limit = 100;
+  try {
+    const db = await Crypto.find({});
+    console.log(db);
+    const timeframe = '1d';
+    const limit = 100;
 
-  for (const i of db) {
-    const historicalData = await fetchHistoricalData(i.symbol, timeframe, limit);
-    const closingPrices = historicalData.map(data => parseFloat(data));
+    for (const i of db) {
+      const historicalData = await fetchHistoricalData(i.symbol, timeframe, limit);
+      const closingPrices = historicalData.map(data => parseFloat(data));
 
-    const { fastMACD, slowMACD, signalLine } = calculateMACD(closingPrices);
+      try {
+        const { fastMACD, slowMACD, signalLine } = calculateMACD(closingPrices);
 
-    console.log(`MACD for ${i.symbol}`);
-    console.log('Fast MACD Line:', fastMACD);
-    console.log('Slow MACD Line:', slowMACD);
-    console.log('Signal Line:', signalLine);
-    console.log('-----------------------------');
+        console.log(`MACD for ${i.symbol}`);
+        console.log('Fast MACD Line:', fastMACD);
+        console.log('Slow MACD Line:', slowMACD);
+        console.log('Signal Line:', signalLine);
+        console.log('-----------------------------');
 
-    const fast = fastMACD;
-    const slow = slowMACD;
+        const fast = fastMACD;
+        const slow = slowMACD;
 
-    if (fast[fast.length - 2] > fast[fast.length - 1]) {
-      await alertDownMail(i.email, i.symbol);
-      console.log('Yes');
-      break;
+        if (fast[fast.length - 2] > fast[fast.length - 1]) {
+          await alertDownMail(i.email, i.symbol);
+          console.log('Alert Down Email Sent');
+          break;
+        }
+
+        if (slow[slow.length - 1] < fast[fast.length - 1]) {
+          await alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol);
+          console.log('Alert Email Sent');
+        }
+
+        console.log('No alert triggered');
+      } catch (error) {
+        console.error('Error calculating MACD:', error);
+      }
     }
-
-    if (slow[slow.length - 1] < fast[fast.length - 1]) {
-      await alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol);
-      console.log('Yes');
-    }
-
-    console.log('No');
+  } catch (error) {
+    console.error('Error fetching data from the database:', error);
   }
 }
-setInterval(alerter, 24*60*60* 1000);
+
+setInterval(alerter, 30 * 1000);
+
 app.use(connect_flash())
 
 
