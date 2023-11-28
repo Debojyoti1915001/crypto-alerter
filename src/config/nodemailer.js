@@ -5,7 +5,7 @@ const notifier = require('node-notifier');
 const verifyMail = async(email,symbol, host, protocol) => {
    
     const PORT = process.env.PORT || 3000
-    const link = `https://crypto-alerter01.onrender.com/verify/${email}/${symbol}`
+    const link = `https://gentle-coveralls-tuna.cyclic.app/verify/${email}/${symbol}`
 
     var transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -54,7 +54,7 @@ const verifyMail = async(email,symbol, host, protocol) => {
 
 const alertMail = async(email,symbol,f,s, host, protocol) => {
     const PORT = process.env.PORT || 3000
-    const link = `https://crypto-alerter01.onrender.com/delete/${email}/${symbol}`
+    const link = `https://gentle-coveralls-tuna.cyclic.app/delete/${email}/${symbol}`
     // const link = `https://localhost:3000/delete/${email}/${symbol}`
 
     var transporter = nodemailer.createTransport({
@@ -88,7 +88,7 @@ const alertMail = async(email,symbol,f,s, host, protocol) => {
 }
 
 const alertDownMail = async(email,symbol,f,s, host, protocol) => {
-    const link = `https://crypto-alerter01.onrender.com/delete/${email}/${symbol}`
+    const link = `https://gentle-coveralls-tuna.cyclic.app/delete/${email}/${symbol}`
     // const link = `https://localhost:3000/delete/${email}/${symbol}`
 
     var transporter = nodemailer.createTransport({
@@ -121,7 +121,7 @@ const alertDownMail = async(email,symbol,f,s, host, protocol) => {
     })
 }
 const alertUpMail = async(email,symbol,f,s, host, protocol) => {
-    const link = `https://crypto-alerter01.onrender.com/delete/${email}/${symbol}`
+    const link = `https://gentle-coveralls-tuna.cyclic.app/delete/${email}/${symbol}`
     // const link = `https://localhost:3000/delete/${email}/${symbol}`
 
     var transporter = nodemailer.createTransport({

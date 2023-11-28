@@ -1,5 +1,5 @@
 # crypto-alerter
-Link : https://crypto-alerter01.onrender.com/
+Link : https://gentle-coveralls-tuna.cyclic.app/
 The Website above allows us to add trading pairs and get notified when the first trading pair has value greater than the other.
 Email is sent as alert in 1hr interval in case the above condition satisfy.
 Steps:
