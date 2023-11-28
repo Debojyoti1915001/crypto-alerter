@@ -88,13 +88,13 @@ async function alerter() {
     const slow = slowMACD;
 
     if (fast[fast.length - 2] > fast[fast.length - 1]) {
-      alertDownMail(i.email, i.symbol);
+      await alertDownMail(i.email, i.symbol);
       console.log('Yes');
       break;
     }
 
     if (slow[slow.length - 1] < fast[fast.length - 1]) {
-      alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol);
+      await alertMail(i.email, i.symbol, fast[j], slow[j], process.env.hostname, process.env.protocol);
       console.log('Yes');
     }
 
